@@ -1,7 +1,8 @@
 <font size=4 face="黑体">
 #<center> EE114 Lab1:51 单片机概述及最小系统搭建
 #<center>实验报告 </center>
-###<center> 姓名：梁家伟 学号：98277894
+###<center>Due:2018.09.28 </center>
+###<center> 姓名：梁家伟 学号：98277894 
 ------
 ##I.实验要求
 * 根据实验指导书lab1介绍内容，完成 51 单片机最小系统的 Proteus 仿真、搭建和Keil程序实现。
@@ -21,6 +22,7 @@
 11 | 1100 | 110000 | 11000000
 <div align=left>
 
+*gif演示*：[https://mine4ever.github.io/Embedded_Lab/Lab1/1-2-2.gif](https://mine4ever.github.io/Embedded_Lab/Lab1/1-2-2.gif)
 
 程序如下：
 <pre>
@@ -29,13 +31,13 @@ void delay(int);
 void main()
 {
 	int i;
-	P2=0x03;       //初始值为11（二进制）
+	P2=0x03;       //the initial value is 11(binary)
 	delay(500);
 	while(1)
 	{
-		for(i=0;i<3;i++)  //共循环4次
+		for(i=0;i<3;i++)  //loop 4 times
 		{
-			P2<<=2;    //向左移两位，例如：11->1100(二进制)
+			P2<<=2;    //move two bits to the left,for example:11->1100(binary)
 			delay(500);
 		}
 		P2=0x03;
@@ -57,6 +59,9 @@ void delay(int x)
 11 | 110 | 1100 | 11000 | 110000 | 1100000 | 11000000 
 <div align=left>
 
+*gif演示*：[https://mine4ever.github.io/Embedded_Lab/Lab1/1-2-2.gif](https://mine4ever.github.io/Embedded_Lab/Lab1/2-2-2.gif)
+
+
 程序如下：
 <pre>
 #include<reg52.h>
@@ -64,13 +69,13 @@ void delay(int);
 void main()
 {
 	int i;
-	P2=0x03;        //初始值为11（二进制）
+	P2=0x03;        //the initial value is 11(binary)
 	delay(500);
 	while(1)
 	{
-		for(i=0;i<6;i++)   //共循环7次
+		for(i=0;i<6;i++)   //loop 7 times
 		{
-			P2<<=1;     //向左移两位，例如：11->1100(二进制)
+			P2<<=1;     //move one bit to the left,for example:11->110(binary)
 			delay(500);
 		}
 		P2=0x03;
