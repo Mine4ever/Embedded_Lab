@@ -1,0 +1,377 @@
+A51 MACRO ASSEMBLER  MUSIC                                                                10/09/2018 09:53:05 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\music.obj
+ASSEMBLER INVOKED BY: D:\study_tools\Embedded_tools\C51\BIN\A51.EXE music.asm SET(SMALL) DEBUG PRINT(.\Listings\music.ls
+                      t) OBJECT(.\Objects\music.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+  0090                 1     SPK EQU P1.0; SPK: PIN_174 (SPKER)
+                       2     ; INPUT
+  00B0                 3     PAUSE EQU P3.0; PAUSE: PIN_233 (Key 0)
+                       4     
+0000                   5     org 0000H; code segment align
+0000 8000              6     jmp START; goto START => 2 cycles
+                       7     
+                       8     ; @name: START
+                       9     ; @desc: ???
+                      10     ; @param: TABLE {Array} - ?????????????
+                      11     ; @param: S_PARA {Array} - ?????
+                      12     ; @param: DELAY_T {Array} - ???????
+                      13     ; @write: R0, R1, R2, R3, R4, R5, R7, A
+                      14     ; @cycle: Infinity
+0002                  15     START:
+0002 7B00             16       mov R3, #00H; => 1 cycle
+0004                  17       NEXT:
+0004 EB               18         mov A, R3; => 1 cycle
+0005 9000BA           19         mov DPTR, #TABLE; => 2 cycles
+0008 93               20         movc A, @A + DPTR; => 2 cycles
+0009 60F7             21         jz START; => 2 cycles
+000B FF               22         mov R7, A; => 1 cycle
+000C 0B               23         inc R3; => 1 cycle
+                      24     
+000D EB               25         mov A, R3; => 1 cycle
+000E 93               26         movc A, @A + DPTR; => 2 cycles
+000F FA               27         mov R2, A; => 1 cycle
+                      28         
+0010 1115             29         acall SONG; => ... @see {SONG}
+0012 0B               30         inc R3; => 1 cycle
+0013 80EF             31         sjmp NEXT; => 2 cycles
+                      32     
+                      33     ; @name: SONG
+                      34     ; @desc: ?????????
+                      35     ; @param: R2 - ???? R2 ?????? (????????2)
+                      36     ; @param: DELAY_T {Array} - ???????
+                      37     ; @param: S_PARA {Array} - ?????
+                      38     ; @param: R7 - ????
+                      39     ; @write: R0, R1, R2, R4, R5, A
+                      40     ; @alias:
+                      41     ;   - [0]: S_PARA[R7]
+                      42     ;   - [1]: DELAY_T[R7]
+                      43     ; @cycle: R2 * [0] * [1] * 48 + R2 * [0] * 40 + R2 * 36 + 9 (if R2 != 0)
+                      44     ; @cycle: [0] * [1] * 24 + [0] * 20 + 28 (only if R2 = 0)
+                      45     ; @note: ???? t = 12 * @cycle / CPU_FREQUENCY
+                      46     ; @note: ???? f = (R2 * 2 * [0]) / t
+                      47     ; @note: ????? SONG ??????????????
+                      48     ; @note: ??????? R2 ?? SONG ?????????,?????
+0015                  49     SONG:; call this => 2 cycles
+0015 EA               50       mov A, R2; 1 cycle
+0016 23               51       RL A; 1 cycle
+0017 7002             52       jnz KEEP; 2 cycles
+0019 7401             53         mov A, #01H; 1 cycle
+001B                  54       KEEP:; branch => 2 cycles (+1 only if R2 = 0)
+001B FA               55       mov R2, A; 1 cycle
+001C                  56       REPEAT:; [0] * [1] * 24 + [0] * 20 + 18 cycles for each, hit R2 * 2 (1 only if R2 = 0) ti
+                             mes => R2 * [0] * [1] * 48 + R2 * [0] * 40 + R2 * 36 cycles
+A51 MACRO ASSEMBLER  MUSIC                                                                10/09/2018 09:53:05 PAGE     2
+
+001C 1121             57         acall EIGHTH; => [0] * [1] * 24 + [0] * 20 + 16 cycles
+001E DAFC             58         djnz R2, REPEAT; => 2 cycles
+0020 22               59       ret; return => 2 cycles
+                      60     
+                      61     ; @name: EIGHTH
+                      62     ; @desc: ?? 1/8 ??????
+                      63     ; @param: DELAY_T {Array} - ???????
+                      64     ; @param: S_PARA {Array} - ?????
+                      65     ; @param: R7 - ????
+                      66     ; @write: R0, R1, R4, R5, A
+                      67     ; @cycle: S_PARA[R7] * DELAY_T[R7] * 24 + S_PARA[R7] * 20 + 16
+                      68     ; @note: ???? n = S_PARA[R7]
+                      69     ; @note: ??????? t = 12 * @cycle / CPU_FREQUENCY
+                      70     ; @note: ?? f = n / t
+                      71     ; @note: ???????????????????
+0021                  72     EIGHTH:; call this => 2 cycles
+                      73       ; R4 := DELAY_T[R7]
+0021 EF               74       mov A, R7; => 1 cycle
+0022 900081           75       mov DPTR, #DELAY_T; => 2 cycles
+0025 93               76       movc A, @A + DPTR; => 2 cycles
+0026 FC               77       mov R4, A; 1 cycle
+                      78       ; R5 := S_PARA[R7]
+0027 EF               79       mov A, R7; => 1 cycle
+0028 900048           80       mov DPTR, #S_PARA; => 2 cycles
+002B 93               81       movc A, @A + DPTR; => 2 cycles
+002C FD               82       mov R5, A; => 1 cycle
+002D                  83       NEXTCYC:; R4 * 24 + 20 cycles each loop, hit R5 times => R5 * R4 * 24 + R5 * 20 cycles
+002D 20B0FD           84         jb PAUSE, $; while (!PAUSE);
+0030 1135             85         acall SOUND; => R4 * 24 + 18 cycles
+0032 DDF9             86         djnz R5, NEXTCYC; => 2 cycles
+0034 22               87       ret; return => 2 cycles
+                      88     
+                      89     ; @name: SOUND
+                      90     ; @desc: ??????????
+                      91     ; @param: R4 - ??????????
+                      92     ; @write: R0, R1, A
+                      93     ; @cycle: R4 * 24 + 18 (????)
+                      94     ; @note: ?????? 50 %
+                      95     ; @note: ???????? 1 cycle
+0035                  96     SOUND:; => call this => 2 cycles
+0035 D290             97       setb SPK; => 1 cycle
+0037 113E             98       acall SDELAY; => R4 * 12 + 6 cycles
+0039 C290             99       clr SPK; => 1 cycle
+003B 113E            100       acall SDELAY; => R4 * 12 + 6 cycles
+003D 22              101       ret; return => 2 cycles
+                     102     
+                     103     ; @name: SDELEY
+                     104     ; @desc: Soft Delay (???)
+                     105     ; @param: R4 - ??????????
+                     106     ; @write: R0, R1, A
+                     107     ; @cycle: R4 * 12 + 6
+003E                 108     SDELAY:; call this => 2 cycles
+003E EC              109       mov A, R4; => 1 cycle
+003F F8              110       mov R0, A; => 1 cycle
+0040                 111       XL2:; 12 cycles each loop, hit R4 times => R4 * 12 cycles
+0040 7903            112         mov R1, #03H; => 1 cycle
+0042                 113         DL1:; 3 cycles each loop, hit 3 times => 9 cycles
+0042 00              114           nop; => 1 cycle
+0043 D9FD            115           djnz R1, DL1; => 2 cycles
+0045 D8F9            116         djnz R0, XL2; => 2 cycles
+0047 22              117       ret; return => 2 cycles
+                     118     
+                     119     ; @name: S_PARA
+                     120     ; @desc: ??????????????
+                     121     ; @note: ???????(FFH, 00H) ????,????????
+0048                 122     S_PARA:
+A51 MACRO ASSEMBLER  MUSIC                                                                10/09/2018 09:53:05 PAGE     3
+
+0048                 123     ds 1DH
+0065 151600          124     db 15H, 16H, 00H
+0068 19001C00        125     db 19H, 00H, 1CH, 00H, 1FH, 21H, 00H, 25H
+006C 1F210025                
+0070 00292C00        126     db 00H, 29H, 2CH, 00H, 31H, 34H, 37H, 00H
+0074 31343700                
+0078 3E410049        127     db 3EH, 41H, 00H, 49H, 00H, 52H, 57H, 00H
+007C 00525700                
+0080 62              128     db 62H
+                     129     
+                     130     ; @name: DELAY_T
+                     131     ; @desc: ?????
+                     132     ; @note: ???????(FFH, 00H) ????,????????
+0081                 133     DELAY_T:
+0081                 134     ds 1DH
+009E 7E7700          135     db 7EH, 77H, 00H
+00A1 6A005E00        136     db 6AH, 00H, 5EH, 00H, 54H, 4FH, 00H, 46H
+00A5 544F0046                
+00A9 003F3B00        137     db 00H, 3FH, 3BH, 00H, 35H, 32H, 2FH, 00H
+00AD 35322F00                
+00B1 2A270023        138     db 2AH, 27H, 00H, 23H, 00H, 1FH, 1DH, 0C0H
+00B5 001F1DC0                
+00B9 1A              139     db 1AH
+                     140     
+                     141     
+                     142     ; @name: TABLE
+                     143     ; @desc: «???» ?????
+                     144     ; @note: ?????????
+                     145     ; @note: ?????????? S_PARA ? DELAY_T ?????
+                     146     ; @note: ?????????????????
+00BA                 147     TABLE:
+00BA 2008            148     DW 2008H, 2708H, 2704H, 2504h, 2908H
+00BC 2708                    
+00BE 2704                    
+00C0 2504                    
+00C2 2908                    
+00C4 2008            149     DW 2008H, 2708H, 2704H, 2504H, 2908H
+00C6 2708                    
+00C8 2704                    
+00CA 2504                    
+00CC 2908                    
+00CE 2208            150     DW 2208H, 2908H, 2904H, 2704H, 2A08H
+00D0 2908                    
+00D2 2904                    
+00D4 2704                    
+00D6 2A08                    
+00D8 2208            151     DW 2208H, 2906H, 2A02H, 2904H, 2704H, 2504H, 2202H, 2002H
+00DA 2906                    
+00DC 2A02                    
+00DE 2904                    
+00E0 2704                    
+00E2 2504                    
+00E4 2202                    
+00E6 2002                    
+00E8 2008            152     DW 2008H, 2708H, 2704H, 2504H, 2908H
+00EA 2708                    
+00EC 2704                    
+00EE 2504                    
+00F0 2908                    
+00F2 2008            153     DW 2008H, 2708H, 2704H, 2504H, 2908H
+00F4 2708                    
+00F6 2704                    
+00F8 2504                    
+00FA 2908                    
+00FC 2208            154     DW 2208H, 2908H, 2904H, 2704H, 2A08H
+00FE 2908                    
+A51 MACRO ASSEMBLER  MUSIC                                                                10/09/2018 09:53:05 PAGE     4
+
+0100 2904                    
+0102 2704                    
+0104 2A08                    
+0106 2208            155     DW 2208H, 2906H, 2A02H, 2904H, 2704H, 2504H, 2C02H, 2D02H
+0108 2906                    
+010A 2A02                    
+010C 2904                    
+010E 2704                    
+0110 2504                    
+0112 2C02                    
+0114 2D02                    
+0116 2D04            156     DW 2D04H, 2904H, 2904H, 2504H, 2504H, 2204H, 2504H, 2C04H
+0118 2904                    
+011A 2904                    
+011C 2504                    
+011E 2504                    
+0120 2204                    
+0122 2504                    
+0124 2C04                    
+0126 2C04            157     DW 2C04H, 2704H, 2704H, 2404H, 2404H, 2004H, 2404H, 2504H
+0128 2704                    
+012A 2704                    
+012C 2404                    
+012E 2404                    
+0130 2004                    
+0132 2404                    
+0134 2504                    
+0136 2208            158     DW 2208H, 2504H, 2204H, 2504H, 2202H, 2502H, 2502H, 2702H, 2902H, 2A02H
+0138 2504                    
+013A 2204                    
+013C 2504                    
+013E 2202                    
+0140 2502                    
+0142 2502                    
+0144 2702                    
+0146 2902                    
+0148 2A02                    
+014A 2A02            159     DW 2A02H, 2704H, 2708H, 2908H, 2A08H
+014C 2704                    
+014E 2708                    
+0150 2908                    
+0152 2A08                    
+                     160     
+0154 2C03            161     DW 2C03H, 2A03H, 2903H, 2903H, 2A03H, 2C03H, 2C03H, 2A03H, 2903H, 2903H, 2502H
+0156 2A03                    
+0158 2903                    
+015A 2903                    
+015C 2A03                    
+015E 2C03                    
+0160 2C03                    
+0162 2A03                    
+0164 2903                    
+0166 2903                    
+0168 2502                    
+                     162     
+016A 2C03            163     DW 2C03H, 2A03H, 2903H, 2903H, 2A03H, 2C03H, 2C03H, 2A03H, 2903H, 2903H, 2501H, 2701H
+016C 2A03                    
+016E 2903                    
+0170 2903                    
+0172 2A03                    
+0174 2C03                    
+0176 2C03                    
+0178 2A03                    
+017A 2903                    
+017C 2903                    
+017E 2501                    
+A51 MACRO ASSEMBLER  MUSIC                                                                10/09/2018 09:53:05 PAGE     5
+
+0180 2701                    
+                     164     
+0182 2904            165     DW 2904H, 2C04H, 2C04H, 2502H, 2702H, 2904H, 2C04H, 2C04H, 2502H, 2702H
+0184 2C04                    
+0186 2C04                    
+0188 2502                    
+018A 2702                    
+018C 2904                    
+018E 2C04                    
+0190 2C04                    
+0192 2502                    
+0194 2702                    
+0196 2504            166     DW 2504H, 2704H, 2504H, 2704H, 2904H, 2702H, 2902H, 2A04H, 2902H, 2A02H
+0198 2704                    
+019A 2504                    
+019C 2704                    
+019E 2904                    
+01A0 2702                    
+01A2 2902                    
+01A4 2A04                    
+01A6 2902                    
+01A8 2A02                    
+                     167     
+01AA 2C03            168     DW 2C03H, 2A03H, 2903H, 2903H, 2A03H, 2C03H, 2C03H, 2A03H, 2903H, 2903H, 2502H
+01AC 2A03                    
+01AE 2903                    
+01B0 2903                    
+01B2 2A03                    
+01B4 2C03                    
+01B6 2C03                    
+01B8 2A03                    
+01BA 2903                    
+01BC 2903                    
+01BE 2502                    
+                     169     
+01C0 2C03            170     DW 2C03H, 2A03H, 2903H, 2903H, 2A03H, 2C03H, 2C03H, 2A03H, 2903H, 2903H, 2501H, 2701H
+01C2 2A03                    
+01C4 2903                    
+01C6 2903                    
+01C8 2A03                    
+01CA 2C03                    
+01CC 2C03                    
+01CE 2A03                    
+01D0 2903                    
+01D2 2903                    
+01D4 2501                    
+01D6 2701                    
+01D8 2904            171     DW 2904H, 2C04H, 2C04H, 2502H, 2702H, 2904H, 2C04H, 2C04H, 2502H, 2902H
+01DA 2C04                    
+01DC 2C04                    
+01DE 2502                    
+01E0 2702                    
+01E2 2904                    
+01E4 2C04                    
+01E6 2C04                    
+01E8 2502                    
+01EA 2902                    
+01EC 2504            172     DW 2504H, 2704H, 2504H, 2704H, 2904H, 2A04H, 2C04H, 3004H
+01EE 2704                    
+01F0 2504                    
+01F2 2704                    
+01F4 2904                    
+01F6 2A04                    
+01F8 2C04                    
+01FA 3004                    
+                     173     
+A51 MACRO ASSEMBLER  MUSIC                                                                10/09/2018 09:53:05 PAGE     6
+
+01FC 3020            174     DW 3020H
+01FE 0000            175     DW 0000H
+                     176     
+                     177     end
+A51 MACRO ASSEMBLER  MUSIC                                                                10/09/2018 09:53:05 PAGE     7
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY_T. . . . . .  C ADDR   0081H   A   
+DL1. . . . . . . .  C ADDR   0042H   A   
+EIGHTH . . . . . .  C ADDR   0021H   A   
+KEEP . . . . . . .  C ADDR   001BH   A   
+NEXT . . . . . . .  C ADDR   0004H   A   
+NEXTCYC. . . . . .  C ADDR   002DH   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PAUSE. . . . . . .  B ADDR   00B0H.0 A   
+REPEAT . . . . . .  C ADDR   001CH   A   
+SDELAY . . . . . .  C ADDR   003EH   A   
+SONG . . . . . . .  C ADDR   0015H   A   
+SOUND. . . . . . .  C ADDR   0035H   A   
+SPK. . . . . . . .  B ADDR   0090H.0 A   
+START. . . . . . .  C ADDR   0002H   A   
+S_PARA . . . . . .  C ADDR   0048H   A   
+TABLE. . . . . . .  C ADDR   00BAH   A   
+XL2. . . . . . . .  C ADDR   0040H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

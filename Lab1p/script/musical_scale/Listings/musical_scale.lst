@@ -1,0 +1,74 @@
+A51 MACRO ASSEMBLER  MUSICAL_SCALE                                                        10/08/2018 23:22:14 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\musical_scale.obj
+ASSEMBLER INVOKED BY: D:\study_tools\Embedded_tools\C51\BIN\A51.EXE musical_scale.asm SET(SMALL) DEBUG PRINT(.\Listings\
+                      musical_scale.lst) OBJECT(.\Objects\musical_scale.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                             org 000H
+0000 803E              2                             sjmp start
+0002 60554C48          3     notes:          db 96,85,76,72,64,57,51,48;
+0006 40393330                
+000A 8393A5AF          4     duration:       db 131,147,165,175,196,220,255;
+000E C4DCFF                  
+                       5             
+0040                   6                             org 0040H
+0040 7B07              7     start:          mov R3,#7
+0042 209003            8     loop4:          jb P1.0,forward
+0045 1B                9                             dec R3
+0046 8001             10                             sjmp mod7
+0048 0B               11     forward:        inc R3
+0049 EB               12     mod7:           mov a,R3
+004A 75F008           13                             mov b,#8
+004D 84               14                             div ab
+004E E5F0             15                             mov a,b
+0050 ABF0             16                             mov R3,b
+0052 90000A           17                             mov dptr,#duration
+0055 93               18                             movc a,@a+dptr
+0056 FA               19                             mov R2,a
+0057 E5F0             20     loop3:          mov a,b
+0059 900002           21                             mov dptr,#notes
+005C 93               22                             movc a,@a+dptr
+005D F9               23                             mov R1,a
+005E 780A             24     loop2:          mov R0,#10
+0060 D9FC             25     loop1:          djnz R1,loop2    ;96*3
+0062 B2B1             26                             cpl P3.1
+0064 DAF1             27                             djnz R2,loop3    ;(7+96*3)*131
+0066 A914             28                             mov R1,20
+0068 78FF             29     delay2:         mov R0,#255
+006A D8FE             30     delay1:         djnz R0,$        ;255*2
+006C D9FA             31                             djnz R1,delay2   ;(255*2+3)*255
+006E 80D2             32                             sjmp loop4
+0070 80FE             33                             sjmp $
+                      34                             end
+A51 MACRO ASSEMBLER  MUSICAL_SCALE                                                        10/08/2018 23:22:14 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+DELAY1 . . . . . .  C ADDR   006AH   A   
+DELAY2 . . . . . .  C ADDR   0068H   A   
+DURATION . . . . .  C ADDR   000AH   A   
+FORWARD. . . . . .  C ADDR   0048H   A   
+LOOP1. . . . . . .  C ADDR   0060H   A   
+LOOP2. . . . . . .  C ADDR   005EH   A   
+LOOP3. . . . . . .  C ADDR   0057H   A   
+LOOP4. . . . . . .  C ADDR   0042H   A   
+MOD7 . . . . . . .  C ADDR   0049H   A   
+NOTES. . . . . . .  C ADDR   0002H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+START. . . . . . .  C ADDR   0040H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

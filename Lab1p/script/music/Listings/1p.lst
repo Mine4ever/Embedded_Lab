@@ -1,0 +1,354 @@
+A51 MACRO ASSEMBLER  1P                                                                   10/10/2018 13:19:17 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\1p.obj
+ASSEMBLER INVOKED BY: D:\study_tools\Embedded_tools\C51\BIN\A51.EXE 1p.asm SET(SMALL) DEBUG PRINT(.\Listings\1p.lst) OBJ
+                      ECT(.\Objects\1p.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                             ORG 0000H
+                       2                             ;P2 as input
+0000 74FF              3                             MOV A,#0FFH
+0002 F5A0              4                             MOV P2,A
+0004 8007              5                             SJMP CSONG
+                       6     
+000B                   7                             ORG 000BH
+000B 8055              8                             SJMP EXIT
+                       9                             
+                      10                             
+                      11                             
+000D                  12     CSONG:
+                      13                             
+000D E5A0             14                             MOV A,P2
+000F B4FE05           15                             CJNE A,#0FEH,SONG2
+0012                  16     SONG1:
+0012 900076           17                             MOV DPTR,#TABLE1
+0015 801D             18                             SJMP START
+0017                  19     SONG2:
+0017 B4FD05           20                             CJNE A,#0FDH,SONG3
+001A 9000CC           21                             MOV DPTR,#TABLE2
+001D 8015             22                             SJMP START
+001F                  23     SONG3:
+001F B4FB05           24                             CJNE A,#0FBH,SONG4
+0022 900164           25                             MOV DPTR,#TABLE3
+0025 800D             26                             SJMP START      
+0027                  27     SONG4:
+0027 B4F705           28                             CJNE A,#0F7H,SONG5
+002A 9001C6           29                             MOV DPTR,#TABLE4
+002D 8005             30                             SJMP START                      
+                      31                             
+002F                  32     SONG5:
+002F B4FFDB           33                             CJNE A,#0FFH,CSONG
+0032 80D9             34                             SJMP CSONG
+                      35     
+0034                  36     START:
+0034 F5F0             37                             MOV B,A
+0036 758901           38                             MOV TMOD,#1H
+0039 75A882           39                             MOV IE,#82H
+                      40                             ;MOV DPTR,#TABLE
+                      41                             
+                      42                             
+003C                  43     LOOP:
+003C E4               44                             CLR A
+003D 93               45                             MOVC A,@A+DPTR
+003E F9               46                             MOV R1,A
+003F A3               47                             INC DPTR
+0040 E4               48                             CLR A
+0041 93               49                             MOVC A,@A+DPTR
+0042 F8               50                             MOV R0,A
+                      51                             
+0043 49               52                             ORL A,R1
+0044 600F             53                             JZ TIMING0             ;or,stop(R1=R0=00H)
+                      54                             
+0046 E8               55                             MOV A,R0
+0047 59               56                             ANL A,R1
+0048 B4FF02           57                             CJNE A,#0FFH,TIMING    ;and,finish(R1=R0=0FFH)
+A51 MACRO ASSEMBLER  1P                                                                   10/10/2018 13:19:17 PAGE     2
+
+004B 80C0             58                             JMP CSONG
+                      59                             
+004D                  60     TIMING:
+004D 898C             61                             MOV TH0,R1           ;HIGH
+004F 888A             62                             MOV TL0,R0
+0051 D28C             63                             SETB TR0
+0053 8002             64                             JMP TIMING1
+                      65     
+0055                  66     TIMING0: 
+0055 C28C             67                             CLR TR0
+                      68     
+0057                  69     TIMING1:
+0057 E4               70                             CLR A
+0058 A3               71                             INC DPTR
+0059 93               72                             MOVC A,@A+DPTR
+005A FA               73                             MOV R2,A
+                      74                             
+005B                  75     LOOP1:  
+005B 1169             76                             ACALL DELAY
+005D DAFC             77                             DJNZ R2,LOOP1
+005F A3               78                             INC DPTR
+0060 80DA             79                             JMP LOOP
+0062                  80     EXIT:
+0062 898C             81                             MOV TH0,R1
+0064 888A             82                             MOV TL0,R0
+0066 B2B4             83                             CPL P3.4
+0068 32               84                             RETI
+                      85                             
+0069                  86     DELAY:  
+0069 7F02             87                             MOV R7,#02
+                      88                             
+006B                  89     D2: 
+006B 7EBB             90                             MOV R6,#187
+                      91     
+006D                  92     D3: 
+006D 7DF8             93                             MOV R5,#248
+006F DDFE             94                             DJNZ R5,$
+0071 DEFA             95                             DJNZ R6,D3
+0073 DFF6             96                             DJNZ R7,D2
+0075 22               97                             RET
+                      98                             
+0076                  99     TABLE1:
+0076 FD8003FD        100                             DB 0FDH,080H,03H,   0FDH,80H,01H     ;H4,L4,beat
+007A 8001                    
+007C FDC604FD        101                             DB 0FDH,0C6H,04H,   0FDH,80H,04H
+0080 8004                    
+0082 FE2A04FE        102                             DB 0FEH,02AH,04H,   0FEH,02H,04H
+0086 0204                    
+0088 000004          103                             DB 000H,000H,04H
+008B FD8003FD        104                             DB 0FDH,080H,03H,   0FDH,80H,01H
+008F 8001                    
+0091 FDC604FD        105                             DB 0FDH,0C6H,04H,   0FDH,80H,04H
+0095 8004                    
+0097 FE5C04FE        106                             DB 0FEH,05CH,04H,   0FEH,2AH,04H
+009B 2A04                    
+009D 000004          107                             DB 000H,000H,04H
+00A0 FD8003FD        108                             DB 0FDH,080H,03H,   0FDH,80H,01H
+00A4 8001                    
+00A6 FEC004FE        109                             DB 0FEH,0C0H,04H,   0FEH,84H,04H
+00AA 8404                    
+00AC FE2A04FE        110                             DB 0FEH,02AH,04H,   0FEH,02H,04H
+00B0 0204                    
+00B2 FDC604          111                             DB 0FDH,0C6H,04H
+00B5 FE9803FE        112                             DB 0FEH,098H,03H,   0FEH,98H,01H
+00B9 9801                    
+00BB FE8404FE        113                             DB 0FEH,084H,04H,   0FEH,2AH,04H
+A51 MACRO ASSEMBLER  1P                                                                   10/10/2018 13:19:17 PAGE     3
+
+00BF 2A04                    
+00C1 FE5C04FE        114                             DB 0FEH,05CH,04H,   0FEH,2AH,04H
+00C5 2A04                    
+00C7 000004          115                             DB 000H,000H,04H
+00CA FFFF            116                             DB 0FFH,0FFH
+                     117                                     
+00CC                 118     TABLE2:
+                     119                             ;1.  0F8H,94H,02H
+                     120                             ;2.  0F9H,5CH,02H
+                     121                             ;3.  0FAH,1AH,02H
+                     122                             ;4.  0FAH,6AH,02H
+                     123                             ;5.  0FBH,00H,02H
+                     124                             ;6.  0FBH,8CH,02H
+                     125                             ;7.  0FCH,0EH,02H
+                     126                             ;1   0FCH,4AH,02H
+                     127                             ;2   0FCH,0AEH,02H
+                     128                             ;3   0FDH,08H,02H
+                     129                             ;4   0FDH,30H,02H
+                     130                             ;5   0FDH,80H,02H
+                     131                             ;6   0FDH,0C6H,02H
+                     132                             ;7   0FEH,02H,02H
+                     133                             ;.1  0FEH,2AH,02H
+                     134                             ;.2  0FEH,5CH,02H
+                     135                             ;.3  0FEH,84H,02H
+                     136                             ;.4  0FEH,98H,02H
+                     137                             ;.5  0FEH,0C0H,02H
+                     138                             ;.6  0FEH,0E8H,02H
+                     139                             ;.7  0FFH,06H,02H
+00CC FC4A02FC        140                             DB 0FCH,4AH,02H,   0FCH,4AH,02H
+00D0 4A02                    
+00D2 FCAE04FD        141                             DB 0FCH,0AEH,04H,  0FDH,08H,04H
+00D6 0804                    
+00D8 FD0802FD        142                             DB 0FDH,08H,02H,   0FDH,08H,02H
+00DC 0802                    
+                     143                                     
+00DE 000002FD        144                             DB 00H,00H,02H,    0FDH,08H,02H
+00E2 0802                    
+00E4 FCAE02FC        145                             DB 0FCH,0AEH,02H,  0FCH,4AH,02H
+00E8 4A02                    
+00EA FC0E04FD        146                             DB 0FCH,0EH,04H,   0FDH,0C6H,02H
+00EE C602                    
+00F0 FD8002          147                             DB 0FDH,80H,02H
+                     148                                     
+00F3 000002FD        149                             DB 00H,00H,02H,    0FDH,80H,05H
+00F7 8005                    
+00F9 FDC602FE        150                             DB 0FDH,0C6H,02H,  0FEH,02H,02H
+00FD 0202                    
+00FF FE2A04FD        151                             DB 0FEH,2AH,04H,   0FDH,08H,02H
+0103 0802                    
+0105 FD0802          152                             DB 0FDH,08H,02H
+                     153                                     
+0108 000002FE        154                             DB 00H,00H,02H,    0FEH,2AH,02H
+010C 2A02                    
+010E FE0202FE        155                             DB 0FEH,02H,02H,   0FEH,2AH,02H
+0112 2A02                    
+0114 FE0204FD        156                             DB 0FEH,02H,04H,   0FDH,08H,02H
+0118 0802                    
+011A FD8004          157                             DB 0FDH,80H,04H
+                     158     
+011D FD8002FD        159                             DB 0FDH,80H,02H,   0FDH,0C6H,02H
+0121 C602                    
+0123 FE2A02FD        160                             DB 0FEH,2AH,02H,   0FDH,80H,04H
+0127 8004                    
+0129 FDC602          161                             DB 0FDH,0C6H,02H
+                     162                                     
+012C 000002FD        163                             DB 00H,00H,02H,    0FDH,0C6H,02H
+A51 MACRO ASSEMBLER  1P                                                                   10/10/2018 13:19:17 PAGE     4
+
+0130 C602                    
+0132 FD8002FD        164                             DB 0FDH,80H,02H,   0FDH,30H,02H
+0136 3002                    
+0138 FD8002FD        165                             DB 0FDH,80H,02H,   0FDH,08H,04H
+013C 0804                    
+013E FCAE02FC        166                             DB 0FCH,0AEH,02H,  0FCH,4AH,02H
+0142 4A02                    
+                     167                                     
+0144 FB8C01FC        168                             DB 0FBH,8CH,01H,   0FCH,4AH,01H
+0148 4A01                    
+014A FD0802FC        169                             DB 0FDH,08H,02H,   0FCH,0AEH,02H
+014E AE02                    
+0150 FCAE02FC        170                             DB 0FCH,0AEH,02H,  0FCH,4AH,02H
+0154 4A02                    
+0156 FCAE02FD        171                             DB 0FCH,0AEH,02H,  0FDH,80H,04H
+015A 8004                    
+015C FC4A02FC        172                             DB 0FCH,4AH,02H,   0FCH,0AEH,08H
+0160 AE08                    
+0162 FFFF            173                             DB 0FFH,0FFH
+                     174                                     
+                     175                                     
+0164                 176     TABLE3:
+0164 FDC601FE        177                             DB 0FDH,0C6H,01H,   0FEH,0E8H,01H
+0168 E801                    
+016A FCAE01FD        178                             DB 0FCH,0AEH,01H,   0FDH,008H,01H
+016E 0801                    
+0170 FDC601FE        179                             DB 0FDH,0C6H,01H,   0FEH,002H,01H
+0174 0201                    
+0176 FCAE0100        180                             DB 0FCH,0AEH,01H,   00H,00H,02H
+017A 0002                    
+017C FDC601FE        181                             DB 0FDH,0C6H,01H,   0FEH,0E8H,01H
+0180 E801                    
+0182 FCAE01FD        182                             DB 0FCH,0AEH,01H,   0FDH,008H,01H
+0186 0801                    
+0188 FDC601FE        183                             DB 0FDH,0C6H,01H,   0FEH,002H,01H
+018C 0201                    
+018E FCAE0100        184                             DB 0FCH,0AEH,01H,   00H,00H,02H
+0192 0002                    
+0194 FDC601FE        185                             DB 0FDH,0C6H,01H,   0FEH,0E8H,01H
+0198 E801                    
+019A FCAE01FD        186                             DB 0FCH,0AEH,01H,   0FDH,008H,01H
+019E 0801                    
+01A0 FDC601FE        187                             DB 0FDH,0C6H,01H,   0FEH,002H,01H
+01A4 0201                    
+01A6 FCAE01          188                             DB 0FCH,0AEH,01H;,   0FDH,008H,01H
+01A9 000002          189                             DB 00H,00H,02H
+01AC FDC601FE        190                             DB 0FDH,0C6H,01H,   0FEH,0E8H,01H
+01B0 E801                    
+01B2 FCAE01FD        191                             DB 0FCH,0AEH,01H,   0FDH,008H,01H
+01B6 0801                    
+01B8 FDC601FE        192                             DB 0FDH,0C6H,01H,   0FEH,002H,01H
+01BC 0201                    
+01BE FCAE01          193                             DB 0FCH,0AEH,01H;,   0FDH,008H,01H
+01C1 000002          194                             DB 00H,00H,02H
+                     195                             
+01C4 FFFF            196                             DB 0FFH,0FFH
+                     197                                     
+01C6                 198     TABLE4:
+                     199                     
+                     200                             
+01C6 FD0802FD        201                             DB 0FDH,08H,02H,   0FDH,80H,04H
+01CA 8004                    
+01CC FD8002FD        202                             DB 0FDH,80H,02H,   0FDH,80H,02H
+01D0 8002                    
+01D2 FD0802FD        203                             DB 0FDH,08H,02H,   0FDH,80H,02H
+01D6 8002                    
+A51 MACRO ASSEMBLER  1P                                                                   10/10/2018 13:19:17 PAGE     5
+
+                     204                             
+01D8 FDC604FD        205                             DB 0FDH,0C6H,04H,  0FDH,0C6H,02H
+01DC C602                    
+01DE FD0804          206                             DB 0FDH,08H,04H  
+                     207                                     
+01E1 FCAE02FC        208                             DB 0FCH,0AEH,02H,  0FCH,4AH,04H
+01E5 4A04                    
+01E7 FC4A02FC        209                             DB 0FCH,4AH,02H,   0FCH,0AEH,04H
+01EB AE04                    
+01ED FD8002FD        210                             DB 0FDH,80H,02H,   0FDH,08H,04H
+01F1 0804                    
+01F3 FD0804          211                             DB 0FDH,08H,04H
+                     212                                     
+                     213                             
+                     214                             
+01F6 FD0802FD        215                             DB 0FDH,08H,02H,   0FDH,80H,04H
+01FA 8004                    
+01FC FD8002FD        216                             DB 0FDH,80H,02H,   0FDH,80H,02H
+0200 8002                    
+0202 FD0802FD        217                             DB 0FDH,08H,02H,   0FDH,80H,02H
+0206 8002                    
+                     218                             
+0208 FDC604FD        219                             DB 0FDH,0C6H,04H,  0FDH,0C6H,02H
+020C C602                    
+020E FD0804          220                             DB 0FDH,08H,04H  
+                     221                                     
+0211 FCAE02FC        222                             DB 0FCH,0AEH,02H,  0FCH,4AH,04H
+0215 4A04                    
+0217 FB0002FC        223                             DB 0FBH,00H,02H,   0FCH,0AEH,04H
+021B AE04                    
+021D FD0802FC        224                             DB 0FDH,08H,02H,   0FCH,4AH,04H
+0221 4A04                    
+0223 FC4A04          225                             DB 0FCH,4AH,04H
+                     226                             
+0226 FFFF            227                             DB 0FFH,0FFH
+                     228                                     
+                     229                                     
+                     230                             
+                     231                             END
+A51 MACRO ASSEMBLER  1P                                                                   10/10/2018 13:19:17 PAGE     6
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+CSONG. . . . . . .  C ADDR   000DH   A   
+D2 . . . . . . . .  C ADDR   006BH   A   
+D3 . . . . . . . .  C ADDR   006DH   A   
+DELAY. . . . . . .  C ADDR   0069H   A   
+EXIT . . . . . . .  C ADDR   0062H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+LOOP . . . . . . .  C ADDR   003CH   A   
+LOOP1. . . . . . .  C ADDR   005BH   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+SONG1. . . . . . .  C ADDR   0012H   A   
+SONG2. . . . . . .  C ADDR   0017H   A   
+SONG3. . . . . . .  C ADDR   001FH   A   
+SONG4. . . . . . .  C ADDR   0027H   A   
+SONG5. . . . . . .  C ADDR   002FH   A   
+START. . . . . . .  C ADDR   0034H   A   
+TABLE1 . . . . . .  C ADDR   0076H   A   
+TABLE2 . . . . . .  C ADDR   00CCH   A   
+TABLE3 . . . . . .  C ADDR   0164H   A   
+TABLE4 . . . . . .  C ADDR   01C6H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TIMING . . . . . .  C ADDR   004DH   A   
+TIMING0. . . . . .  C ADDR   0055H   A   
+TIMING1. . . . . .  C ADDR   0057H   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

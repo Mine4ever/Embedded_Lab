@@ -1,0 +1,181 @@
+A51 MACRO ASSEMBLER  5                                                                    10/08/2018 23:22:14 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\5.obj
+ASSEMBLER INVOKED BY: D:\study_tools\Embedded_tools\C51\BIN\A51.EXE C:\Users\93595\Desktop\5.ASM SET(SMALL) DEBUG PRINT(
+                      .\Listings\5.lst) OBJECT(.\Objects\5.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 00H ;???????
+                       2     
+0000 800B              3     JMP START  ;??????
+                       4     
+000B                   5     ORG 0BH;???T0????
+                       6     
+000B 802F              7     JMP EXT0   ;???T0?????
+                       8     
+000D 758901            9     START: MOV TMOD,#00000001B;??T0??1
+                      10     
+0010 75A882           11        MOV IE,#10000010B;??T0??
+                      12     
+0013 900050           13     MOV DPTR,#TABLE   ;?????
+                      14     
+0016 E4               15     LOOP:  CLR A   ;?0
+                      16     
+0017 93               17     MOVC A,@A+DPTR   ;??
+                      18     
+0018 F9               19     MOV R1,A   ;????8???R1
+                      20     
+0019 A3               21     INC DPTR   ;???1
+                      22     
+001A E4               23     CLR A  ;?0
+                      24     
+001B 93               25     MOVC A,@A+DPTR  ;??
+                      26     
+001C F8               27     MOV R0,A  ;????8???R0
+                      28     
+001D 49               29     ORL A,R1   ;???
+001E 600F             30     JZ NEXT0  ;?0????
+                      31     
+0020 E8               32     MOV A,R0
+                      33     
+0021 59               34     ANL A,R1  ;???
+                      35     
+0022 B4FF02           36     CJNE A,#0FFH,NEXT;?1??????
+                      37     
+0025 80E6             38     JMP  START   ;??????
+                      39     
+0027 898C             40     NEXT:  MOV TH0,R1   ;???????
+                      41     
+0029 888A             42     MOV TL0,R0   ;???????
+                      43     
+002B D28C             44     SETB TR0  ;?????T0
+                      45     
+002D 8002             46     JMP NEXT1;???NEXT1
+                      47     
+002F C28C             48     NEXT0: CLR TR0   ;?????,????
+                      49     
+0031 E4               50     NEXT1: CLR A ;?0
+                      51     
+0032 A3               52     INC DPTR ;???1
+                      53     
+0033 93               54     MOVC A,@A+DPTR;?????
+                      55     
+0034 FA               56     MOV R2,A ;??????R2
+                      57     
+A51 MACRO ASSEMBLER  5                                                                    10/08/2018 23:22:14 PAGE     2
+
+0035 1143             58     LOOP1:  ACALL   DELAY ;???????
+                      59     
+0037 DAFC             60     DJNZ R2,LOOP1;??????
+                      61     
+0039 A3               62     INC DPTR ;???1
+                      63     
+003A 80DA             64     JMP LOOP ;???LOOP?
+                      65     
+003C 898C             66     EXT0:   MOV TH0,R1  ;?????
+                      67     
+003E 888A             68     MOV TL0,R0
+                      69     
+0040 B2B4             70     CPL P3.4  ;????
+                      71     
+0042 32               72     RETI ;???????
+                      73     
+0043 7F02             74     DELAY:  MOV R7,#02  ;?????
+                      75     
+0045 7EBB             76     D2: MOV R6,#187
+                      77     
+0047 7DF8             78     D3: MOV R5,#248
+                      79     
+0049 DDFE             80     DJNZ R5,$
+                      81     
+004B DEFA             82     DJNZ R6,D3
+                      83     
+004D DFF6             84     DJNZ R7,D2
+                      85     
+004F 22               86     RET  ;???????
+                      87     
+0050                  88     TABLE:   ;???
+                      89     
+0050 FD8003FD         90       DB 0FDH,80H,03H,0FDH,80H,01H
+0054 8001                    
+                      91     
+0056 FDC604FD         92       DB 0FDH,0C6H,04H,0FDH,80H,04H
+005A 8004                    
+                      93     
+005C FE2A04FE         94       DB 0FEH,2AH,04H,0FEH,02H,04H
+0060 0204                    
+                      95     
+0062 000004           96       DB 00H,00H,04H
+                      97     
+0065 FD8003FD         98      DB 0FDH,80H,03H,0FDH,80H,01H
+0069 8001                    
+                      99     
+006B FDC604FD        100     DB 0FDH,0C6H,04H,0FDH,80H,04H
+006F 8004                    
+                     101     
+0071 FE5C04FE        102        DB 0FEH,5CH,04H,0FEH,2AH,04H
+0075 2A04                    
+                     103     
+0077 000004          104        DB 00H,00H,04H
+                     105     
+007A FD8003FD        106       DB 0FDH,80H,03H,0FDH,80H,01H
+007E 8001                    
+                     107     
+0080 FEC004FE        108      DB 0FEH,0C0H,04H,0FEH,84H,04H
+0084 8404                    
+                     109     
+0086 FE2A04FE        110      DB 0FEH,2AH,04H,0FEH,02H,04H
+008A 0204                    
+                     111     
+008C FDC604          112      DB 0FDH,0C6H,04H
+                     113     
+008F FE9803FE        114      DB 0FEH,98H,03H,0FEH,98H,01H
+A51 MACRO ASSEMBLER  5                                                                    10/08/2018 23:22:14 PAGE     3
+
+0093 9801                    
+                     115     
+0095 FE8404FE        116        DB 0FEH,84H,04H,0FEH,2AH,04H
+0099 2A04                    
+                     117     
+009B FE5C04FE        118       DB 0FEH,5CH,04H,0FEH,2AH,04H
+009F 2A04                    
+                     119     
+00A1 000004          120      DB 00H,00H,004H
+                     121     
+00A4 FEFE            122      DB 0FEH,0FEH  ;???
+                     123     
+                     124     END  ;????
+A51 MACRO ASSEMBLER  5                                                                    10/08/2018 23:22:14 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+D2 . . . . . . . .  C ADDR   0045H   A   
+D3 . . . . . . . .  C ADDR   0047H   A   
+DELAY. . . . . . .  C ADDR   0043H   A   
+EXT0 . . . . . . .  C ADDR   003CH   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+LOOP . . . . . . .  C ADDR   0016H   A   
+LOOP1. . . . . . .  C ADDR   0035H   A   
+NEXT . . . . . . .  C ADDR   0027H   A   
+NEXT0. . . . . . .  C ADDR   002FH   A   
+NEXT1. . . . . . .  C ADDR   0031H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+START. . . . . . .  C ADDR   000DH   A   
+TABLE. . . . . . .  C ADDR   0050H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

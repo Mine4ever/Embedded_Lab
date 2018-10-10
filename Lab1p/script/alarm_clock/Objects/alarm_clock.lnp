@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\alarm_clock.obj" 
+TO ".\Objects\alarm_clock" 
+PRINT(".\Listings\alarm_clock.m51") RAMSIZE(256) 

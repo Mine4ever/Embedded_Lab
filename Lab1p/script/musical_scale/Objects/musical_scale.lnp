@@ -1,0 +1,4 @@
+".\Objects\musical_scale.obj",
+".\Objects\5.obj" 
+TO ".\Objects\musical_scale" 
+PRINT(".\Listings\musical_scale.m51") RAMSIZE(256) 

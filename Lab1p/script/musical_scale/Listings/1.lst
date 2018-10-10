@@ -1,0 +1,26 @@
+A51 MACRO ASSEMBLER  1                                                                    10/01/2018 20:16:43 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\1.obj
+ASSEMBLER INVOKED BY: D:\study_tools\Embedded_tools\C51\BIN\A51.EXE C:\Users\93595\Desktop\1.asm SET(SMALL) DEBUG PRINT(
+                      .\Listings\1.lst) OBJECT(.\Objects\1.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000 79FF              1     MOV R1,#255
+*** WARNING #A41 IN 1 (C:\Users\93595\Desktop\1.asm, LINE 1): MISSING 'END' STATEMENT
+A51 MACRO ASSEMBLER  1                                                                    10/01/2018 20:16:43 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  1 WARNING(S), 0 ERROR(S)

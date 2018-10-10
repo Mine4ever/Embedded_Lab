@@ -1,0 +1,83 @@
+A51 MACRO ASSEMBLER  ALARM_CLOCK                                                          10/01/2018 17:32:14 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\alarm_clock.obj
+ASSEMBLER INVOKED BY: D:\study_tools\Embedded_tools\C51\BIN\A51.EXE alarm_clock.asm SET(SMALL) DEBUG PRINT(.\Listings\al
+                      arm_clock.lst) OBJECT(.\Objects\alarm_clock.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                                     org 0000H
+0000 803E              2                                     sjmp start
+0002 18                3     notes:                  db 24          ;85,76,72,64,57,51,48
+0003 FF                4     duration:               db 255
+                       5             
+0040                   6                                     org 0040H
+0040 1152              7     start:                  acall beep
+0042 116B              8                                     acall delay_short
+0044 1152              9                                     acall beep
+0046 116B             10                                     acall delay_short
+0048 1152             11                                     acall beep
+004A 1174             12                                     acall delay_long
+004C 1174             13                                     acall delay_long
+004E 1174             14                                     acall delay_long
+0050 80EE             15                                     sjmp start
+                      16                             
+0052 7400             17     beep:                   mov a,#0
+0054 900003           18                                     mov dptr,#duration
+0057 93               19                                     movc a,@a+dptr
+0058 FA               20                                     mov R2,a
+0059 7400             21     loop3:                  mov a,#0
+005B 900002           22                                     mov dptr,#notes
+005E 93               23                                     movc a,@a+dptr
+005F F9               24                                     mov R1,a
+0060 780A             25     loop2:                  mov R0,#10
+0062 D8FE             26     loop1:                  djnz R0,$
+0064 D9FA             27                                     djnz R1,loop2
+0066 B2B1             28                                     cpl P3.1
+0068 DAEF             29                                     djnz R2,loop3
+006A 22               30                                     ret
+                      31                             
+006B 7932             32     delay_short:    mov R1,#50
+006D 7832             33     delay2:                 mov R0,#50
+006F D8FE             34     delay1:                 djnz R0,$
+0071 D9FA             35                                     djnz R1,delay2
+0073 22               36                                     ret
+                      37                                     
+0074 79FF             38     delay_long:             mov R1,#255
+0076 78FF             39     delay4:                 mov R0,#255
+0078 D8FE             40     delay3:                 djnz R0,$
+007A D9FA             41                                     djnz R1,delay4
+007C 22               42                                     ret
+                      43                                     
+007D 80FE             44                                     sjmp $
+                      45                                     end
+A51 MACRO ASSEMBLER  ALARM_CLOCK                                                          10/01/2018 17:32:14 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BEEP . . . . . . .  C ADDR   0052H   A   
+DELAY1 . . . . . .  C ADDR   006FH   A   
+DELAY2 . . . . . .  C ADDR   006DH   A   
+DELAY3 . . . . . .  C ADDR   0078H   A   
+DELAY4 . . . . . .  C ADDR   0076H   A   
+DELAY_LONG . . . .  C ADDR   0074H   A   
+DELAY_SHORT. . . .  C ADDR   006BH   A   
+DURATION . . . . .  C ADDR   0003H   A   
+LOOP1. . . . . . .  C ADDR   0062H   A   
+LOOP2. . . . . . .  C ADDR   0060H   A   
+LOOP3. . . . . . .  C ADDR   0059H   A   
+NOTES. . . . . . .  C ADDR   0002H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+START. . . . . . .  C ADDR   0040H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
