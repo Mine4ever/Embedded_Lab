@@ -21,7 +21,7 @@
 * 节拍是通过调用延时子程序DELAY的次数来实现，每次DELAY延时为1/4拍，即178ms，1拍需要调用4次DELAY，3/4拍需要调用3次DELAY，2/4拍需要调用2次DELAY。节拍的控制码在表TABLE中位于音符码的后面。如"0FDH,080H,03H"中，0FDH和80H是音符5的音符码，03H是节拍码，即3/4拍的时间。
 * 当一个音符的发音结束，指针指向下一个一个音符的音符码和节拍码，依次进行下去。
  <div align=center>
-![](https://i.imgur.com/VY9SwPs.png)
+![avatar](notes.png)
 <div align=left>
 ##II.程序设计和实现
 ###1. 函数名称
@@ -61,17 +61,15 @@
 * 230：程序结束。
 ###4. 电路图
  <div align=center>
-![](https://i.imgur.com/61nY5bn.png)
+	![avatar](circuit.png)
 <div align=left>
 
 * 按钮0，播放乐曲1（生日快乐歌）
 * 按钮1，播放乐曲2（纸短情长（片段））
-* 按钮2，播放乐曲3（卡路里（一句））
+* 按钮2，播放乐曲3（卡路里（一句*4））
 * 按钮3，播放乐曲4（成都（片段））
 * 注：只有当播放完毕才能再次切歌，可根据接口输入增加歌曲数目。
 
-
-<div STYLE="page-break-after: always;"></div>
 ###5.Code
     1. 			ORG 0000H
     2. 			;P2 as input
@@ -303,9 +301,8 @@
     228. 				
     229. 			
     230. 			END
-<div STYLE="page-break-after: always;"></div>
 ##所有源文件地址
-
+[https://github.com/Mine4ever/Embedded_Lab/tree/master/Lab1p](https://github.com/Mine4ever/Embedded_Lab/tree/master/Lab1p)
 ##参考资料
 * 51单片机实例按键识别方法之一[https://wenku.baidu.com/view/ea4fabcab84ae45c3b358cf8.html](https://wenku.baidu.com/view/ea4fabcab84ae45c3b358cf8.html)
 * proteus 基于单片机的按键选播电子音乐[https://wenku.baidu.com/view/57d64c230066f5335a81211f.html](https://wenku.baidu.com/view/57d64c230066f5335a81211f.html)
